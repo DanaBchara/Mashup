@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAPAPP | User Profile</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <nav class="nav">
+            <div class="nav-logo">
+                <p style="font-weight: 100">WELCOME TO MESHUP BUSINESS SIDE</p>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <ul>
+                    <li><a href="pr.html" class="link active">back</a></li>
+                </ul>
+            </div>
+            <div class="input-box">
+                <button id="editSchedule" class="submit">reset</button>
+            </div>
+        </nav>
+
+        <!-- Profile box -->
+        <div class="form-box">
+            <div class="profile-container">
+                <header>Edit Schedule</header>
+              
+                <div class="profile-info">
+                     <!--<img id="profilePicture" style="width: 100px; height: 80px;" />
+                    <br>
+                    <input type="file" id="profilePictureInput" accept="image/*">
+                    <button id="savePicture" class="submit">Save Picture</button>
+                   -->
+                    <form id="scheduleForm">
+                        <p style="color: aliceblue;">Days:</p>
+                        <label for="monday">Monday</label>
+                        <input type="checkbox" id="monday" name="monday">
+                        <label for="tuesday">Tuesday</label>
+                        <input type="checkbox" id="tuesday" name="tuesday">
+                        <br>
+                        <label for="wednesday">Wednesday</label>
+                        <input type="checkbox" id="wednesday" name="wednesday">
+                        <label for="thursday">Thursday</label>
+                        <input type="checkbox" id="thursday" name="thursday">
+                        <br>
+                        <label for="friday">Friday</label>
+                        <input type="checkbox" id="friday" name="friday">
+                        <label for="saturday">Saturday</label>
+                        <input type="checkbox" id="saturday" name="saturday">
+                        <br>
+                        <label for="sunday">Sunday</label>
+                        <input type="checkbox" id="sunday" name="sunday">
+                        <br>
+                        <p style="color: aliceblue;">HOURS:</p>
+                        <label for="start">Work Start:</label>
+                        <input type="time" id="start" name="start">
+                        <br>
+                      
+                        <label for="end">Work End:</label>
+                        <input type="time" id="end" name="end">
+                        <br>
+                        
+
+                        <br>
+                        <div class="input-box">
+                            <button class="submit">Save Schedule</button>
+                        </div>
+                    </form>
+                    <br>
+                    <a class="link" id="viewScheduleLink"> Click here to view Schedule </a>
+                    <div id="displayChecked"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+    
+       
+        const firebaseConfig = {
+          apiKey: "AIzaSyCAnxon6V96vmKgTmocQEd6VJkZWKgRGfk",
+          authDomain: "webp-ff448.firebaseapp.com",
+          databaseURL: "https://webp-ff448-default-rtdb.europe-west1.firebasedatabase.app",
+          projectId: "webp-ff448",
+          storageBucket: "webp-ff448.appspot.com",
+          messagingSenderId: "362268597099",
+          appId: "1:362268597099:web:d9674bc4fc811f9c890a2e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const userCreds = JSON.parse(sessionStorage.getItem("user-creds"));
+
+        const getUserData = async () => {
+            const docRef = doc(db, 'Schedule/', userCreds.uid);
+            const docSnap = await getDoc(docRef);
+            const userData = docSnap.data();
+            document.getElementById('firstName').textContent = `First Name: ${userData.firstname}`;
+            document.getElementById('lastName').textContent = `Last Name: ${userData.lastname}`;
+            document.getElementById('businessName').textContent = `Business Name: ${userData.Businessname}`;
+            document.getElementById('phone').textContent = `Phone: ${userData.phone}`;
+            document.getElementById('email').textContent = `Email: ${userData.email}`;
+            if (userData.Schedule && userData.Schedule.days) {
+                document.getElementById('schedule').textContent = `Schedule: ${userData.Schedule.days.join(', ')}`;
+            }
+          
+        };
+
+        getUserData();
+        const scheduleForm = document.getElementById('scheduleForm');
+scheduleForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    const selectedDays = days.filter(day => document.getElementById(day).checked);
+    const start = document.getElementById('start').value;
+    const end = document.getElementById('end').value;
+
+    selectedDays.forEach(async (day) => {
+        const userScheduleRef = doc(db, 'Schedule', userCreds.uid, day, 'Shift_1');
+        const userScheduleDoc = await getDoc(userScheduleRef);
+        const userScheduleData = userScheduleDoc.data() || {};
+
+        const shiftNum = Object.keys(userScheduleData).length + 1;
+        userScheduleData[`Shift_${shiftNum}`] = {
+            start,
+            end
+        
+        };
+
+        await setDoc(userScheduleRef, userScheduleData);
+    });
+
+    alert('Schedule saved successfully!');
+    document.getElementById('schedule').textContent = `Schedule: ${selectedDays.join(', ')}`;
+});
+
+const resetBtn = document.getElementById('editSchedule');
+resetBtn.addEventListener('click', () => {
+    const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    days.forEach(day => {
+        document.getElementById(day).checked = false;
+    });
+   
+    document.getElementById('start').value = null; // Change value to null
+    document.getElementById('end').value = null; // Change value to null
+  
+});
+
+function displayCheckedSentence() {
+    console.log('Displaying checked sentence...');
+
+    const userScheduleRef = doc(db, 'Schedule', userCreds.uid);
+    getDoc(userScheduleRef).then((docSnapshot) => {
+        if (docSnapshot.exists()) {
+            const userData = docSnapshot.data();
+            const selectedDays = Object.keys(userData);
+
+            const displayCheckedDiv = document.getElementById('displayChecked');
+            displayCheckedDiv.innerHTML = "Selected Days: " + selectedDays.join(', ');
+
+            // Display hours for each selected day
+            selectedDays.forEach((day) => {
+                const shifts = Object.keys(userData[day]);
+                shifts.forEach((shift) => {
+                    const hours = userData[day][shift];
+                    displayCheckedDiv.innerHTML += "<br>"+ hours.workStart + " - " + hours.workEnd + ", " ;
+                });
+            });
+        } else {
+            const displayCheckedDiv = document.getElementById('displayChecked');
+            displayCheckedDiv.textContent = 'No schedule data found.';
+        }
+    }).catch((error) => {
+        console.error('Error getting document:', error);
+    });
+}
+
+document.getElementById('viewScheduleLink').addEventListener('click', displayCheckedSentence);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAPAPP | Login & Registration</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <form id="LogForm">
+ <div class="wrapper">
+    <nav class="nav">
+        <div class="nav-logo">
+            <p style="font-weight: 100">WELCOME TO MESHUP BUSINESS SIDE</p>
+        </div>
+        <div class="nav-menu" id="navMenu">
+            <ul>
+                <li><a href="pL.html" class="link active">Home</a></li>
+            <!--    <li><a href="#" class="link">About</a></li>-->
+            </ul>
+        </div>
+    </nav>
+
+<!--Form box-->    
+    <div class="form-box">
+        
+        <!-- login form -->
+
+        <div class="login-container" id="login">
+            <div class="top">
+			<div class="nav-menu" id="navMenu">
+            <ul>
+                <li><a href="pS.html" class="link" style="font-size: small"  onclick="register()">Don't have an account? Sign Up</a></li>
+                
+            </ul>
+        
+        </div>  
+               
+                <header>Login</header>
+            </div>
+		
+            <div class="input-box">
+                <input type="email" class="input-field" placeholder="Email" id="em" required />
+                <i class="bx bx-envelope"></i>
+            </div>
+            <div class="input-box">
+                <input type="password" class="input-field" placeholder="Password" id="ps" required />
+                <i class="bx bx-lock-alt"></i>
+            </div>
+			<div class="input-box">
+                    <input type="submit"  class="submit" value="submit" id="submit"> 
+                </div>
+           
+			
+         
+	
+        </div>
+
+  
+        </div>
+		
+    </div>
+</div>   
+    </form>
+<script>
+   
+   function myMenuFunction() {
+    var i = document.getElementById("navMenu");
+
+    if(i.className === "nav-menu") {
+        i.className += " responsive";
+    } else {
+        i.className = "nav-menu";
+    }
+   }
+ 
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+
+   
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAnxon6V96vmKgTmocQEd6VJkZWKgRGfk",
+      authDomain: "webp-ff448.firebaseapp.com",
+      databaseURL: "https://webp-ff448-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "webp-ff448",
+      storageBucket: "webp-ff448.appspot.com",
+      messagingSenderId: "362268597099",
+      appId: "1:362268597099:web:d9674bc4fc811f9c890a2e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore();
+    const auth = getAuth(app);
+
+    let email = document.getElementById('em');
+    let password = document.getElementById('ps');
+    let LogForm = document.getElementById('LogForm');
+
+    let SignInUser = evt => {
+        evt.preventDefault();
+        signInWithEmailAndPassword(auth, email.value, password.value)
+        .then(async (credentials) => {
+            var ref = doc(db, 'UserAuthList/' + credentials.user.uid);
+            const docSnap = await getDoc(ref);
+
+            if (docSnap.exists){
+                sessionStorage.setItem("user-info", JSON.stringify({
+                    firstname: docSnap.data().firstname,
+                    lastname: docSnap.data().lastname
+                }));
+                sessionStorage.setItem("user-creds", JSON.stringify(credentials.user));
+                window.location.href = 'pr.html';
+            }
+            LogForm.reset(); // Reset form fields
+            window.location.replace("pr.html");
+        })
+        .catch((error) => {
+            alert(error.message);
+            console.log(error.code);
+            console.log(error.message);
+        });
+    };
+
+    LogForm.addEventListener('submit', SignInUser);
+
+
+
+
+
+
+
+    /*
+get(child(dbref,'UserAuthList/' + credentials.user.uid)).then((snapshot)=>{
+    if (snapshot.exists){
+        sessionStorage.setItem("user-info", JSON.stringify({
+            firstname: snapshot.val().firstname,
+            lastname: snapshot.val().lastname
+
+        }))
+        sessionStorage.setItem("user-creds", JSON.stringify(credentials.user));
+        window.location.href ='pIcons.html';
+    }
+
+
+
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+   
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAnxon6V96vmKgTmocQEd6VJkZWKgRGfk",
+      authDomain: "webp-ff448.firebaseapp.com",
+      databaseURL: "https://webp-ff448-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "webp-ff448",
+      storageBucket: "webp-ff448.appspot.com",
+      messagingSenderId: "362268597099",
+      appId: "1:362268597099:web:d9674bc4fc811f9c890a2e"
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+})*/
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

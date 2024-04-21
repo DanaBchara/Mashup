@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAPAPP | Login & Registration</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <form id="RegForm">
+ <div class="wrapper" >
+    <nav class="nav">
+        <div class="nav-logo">
+            <p style="font-weight: 100">WELCOME TO MESHUP BUSINESS SIDE</p>
+        </div>
+        <div class="nav-menu" id="navMenu">
+            <ul>
+                <li><a href="pL.html" class="link active">Home</a></li>
+                <!--<li><a href="#" class="link">About</a></li>-->
+            </ul>
+        </div>
+    </nav>
+
+<!--Form box-->    
+    <div class="form-box">
+        
+        <div class="register-container" id="register">
+            <div class="top">
+			
+<div class="nav-menu" id="navMenu">
+            <ul>
+                <li><a href="pL.html" class="link" style="font-size: small" onclick="login()">Have an account? Login</a></li>
+                
+            </ul>
+        
+        </div>  
+                <header>Sign Up</header>
+            </div>
+			
+            <div class="input-box">
+                <input type="email" class="input-field" placeholder="Email" id="em" required />
+                <i class="bx bx-envelope"></i>
+            </div>
+            <div class="three-forms">
+			
+                <div class="input-box">
+                    <input type="text" class="input-field" placeholder="Firstname" id= "firstname" required />
+                    <i class="bx bx-user"></i>
+                </div>
+                <div class="input-box">
+                    <input type="text" class="input-field" placeholder="Lastname" id="lastname" required />
+                    <i class="bx bx-user"></i>
+                </div>
+							<div class="input-box">
+                <input type="text" class="input-field" placeholder="Businessname" id="bn" required />
+                <i class="bx bx-building"></i>
+            </div>
+            </div>
+			
+			
+	
+	<div class="two-forms">
+   
+			
+			            <div class="input-box">
+                <input type="text" class="input-field" placeholder="phone" id="ph" required />
+                <i class="bx bx-phone"></i>
+            </div>
+            <div class="input-box">
+                <input type="password" class="input-field" placeholder="Password" id="ps" required />
+                <i class="bx bx-lock-alt"></i>
+            </div>
+            </div>
+
+
+			
+            <div class="input-box">
+			<!--<a href="pIcons.html">-->
+                <input type="submit"  class="submit" value="save" id="submit"> 
+            </div>
+       
+        </div>
+		
+    </div>
+</div>   
+</form>
+<script>
+   
+   function myMenuFunction() {
+    var i = document.getElementById("navMenu");
+
+    if(i.className === "nav-menu") {
+        i.className += " responsive";
+    } else {
+        i.className = "nav-menu";
+    }
+   }
+ 
+</script>
+
+<script>
+
+    var a = document.getElementById("loginBtn");
+    var b = document.getElementById("registerBtn");
+    var x = document.getElementById("login");
+    var y = document.getElementById("register");
+
+
+    function register() {
+        x.style.left = "-510px";
+        y.style.right = "5px";
+        a.className = "btn";
+        b.className += " white-btn";
+        x.style.opacity = 0;
+        y.style.opacity = 1;
+    }
+	
+
+
+</script>
+
+
+
+<script type="module">
+    
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+   
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAnxon6V96vmKgTmocQEd6VJkZWKgRGfk",
+      authDomain: "webp-ff448.firebaseapp.com",
+      databaseURL: "https://webp-ff448-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "webp-ff448",
+      storageBucket: "webp-ff448.appspot.com",
+      messagingSenderId: "362268597099",
+      appId: "1:362268597099:web:d9674bc4fc811f9c890a2e"
+    };
+  
+ 
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore();
+    const auth = getAuth(app);
+
+
+    let email= document.getElementById('em');
+let firstname = document.getElementById('firstname');
+let lastname= document.getElementById('lastname');
+let Businessname= document.getElementById('bn');
+let phone= document.getElementById('ph');
+let password= document.getElementById('ps');
+let RegForm= document.getElementById('RegForm');
+
+let RegisterUser = evt => {
+    evt.preventDefault();
+    createUserWithEmailAndPassword(auth, email.value, password.value)
+    .then(async(credentials)=> {
+        var ref = doc(db, 'UserAuthList/' + credentials.user.uid);
+        await setDoc(ref, {
+            email: email.value,
+            firstname: firstname.value,
+            lastname: lastname.value,
+            Businessname: bn.value,
+            phone: phone.value,
+            type: 'Business'
+        });
+        RegForm.reset();
+        window.location.replace("pL.html");
+    })
+    .catch((error)=>{
+        console.log(error.code);
+        console.log(error.message);
+    });
+};
+RegForm.addEventListener('submit', RegisterUser);
+
+
+
+
+
+
+
+
+
+  </script>
+
+
+<!--
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";    
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";     
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAnxon6V96vmKgTmocQEd6VJkZWKgRGfk",
+      authDomain: "webp-ff448.firebaseapp.com",
+      databaseURL: "https://webp-ff448-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "webp-ff448",
+      storageBucket: "webp-ff448.appspot.com",
+      messagingSenderId: "362268597099",   
+      appId: "1:362268597099:web:d9674bc4fc811f9c890a2e"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+
+    document.getElementById("reg").addEventListener('click', function(e){
+
+
+set(ref(db, 'email/' + document.getElementById("em").value),
+{
+  email: document.getElementById("em").value,
+  firstname: document.getElementById("fn").value,
+  lastname: document.getElementById("ln").value,
+  Businessname: document.getElementById("bn").value,
+  phone: document.getElementById("ph").value,
+  password: document.getElementById("ps").value
+
+});
+alert("sign up sucessful!");
+
+    })
+  </script>-->
+</body>
+</html>

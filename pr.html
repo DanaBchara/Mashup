@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAPAPP | User Profile</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div class="wrapper">
+        <nav class="nav">
+            <div class="nav-logo">
+                <p style="font-weight: 100">WELCOME TO MESHUP BUSINESS SIDE</p>
+                <div id="map" style="width: 70%; height: 300px;"></div>
+                <form id="locationForm">
+                    <label for="locationInput">Enter location Longitude and Latitude </label>
+                    <input type="text" id="locationInput" name="locationInput">
+                    <button class="submit" style="font-size: 14px; padding: 6px 12px; margin-left: 4px;" type="submit">save Location</button>
+                </form>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <ul>
+                    <li><a href="pIcons.html" class="link">Icons</a></li>
+                    <li><a href="pr.html" class="link active">Profile</a></li>
+                    <li><a href="pL.html" class="link">SignOut</a></li>
+                    <li><a href="pE.html" class="link">Schedule</a></li>
+                </ul>
+            </div>
+            <div class="input-box">
+               <!-- <a href="pE.html">
+                <button id="editSchedule" class="submit">Edit Schedule</button></a>-->
+                <button id="savePicture" class="submit">Save Picture</button>
+                <label for="image">
+                    <img src="" alt="" id="myimg" style="width: 150px; height: 150px; ">
+                </label>
+                <input type="file" id="image" style="display: none;">
+                
+            </div>
+            
+        </nav>
+
+        <!-- Profile box -->
+        <div class="form-box">
+            <div class="profile-container">
+                <header>User Profile</header>
+                
+                <div class="profile-info">
+                    <p id="firstName"></p>
+                    <p id="lastName"></p>
+                    <p id="businessName"></p>
+                    <p id="phone"></p>
+                    <p id="email"></p>
+                    <p id="location"></p>
+                   <!-- <img id="profilePicture" style="width: 100px; height: 80px;" />-->
+                    
+                  
+                
+                <script>
+                    const form = document.getElementById('locationForm');
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const input = document.getElementById('locationInput').value.trim();
+                        if (!input) {
+                            alert('Please enter coordinates.');
+                            return;
+                        }
+            
+                        // Parse DMS format to decimal degrees
+                        const regex = /(\d+)°(\d+)′(\d+)″([NS])\s*(\d+)°(\d+)′(\d+)″([EW])/;
+                        const matches = input.match(regex);
+                        if (!matches) {
+                            alert('Invalid coordinates format.');
+                            return;
+                        }
+            
+                        const latDeg = parseFloat(matches[1]);
+                        const latMin = parseFloat(matches[2]);
+                        const latSec = parseFloat(matches[3]);
+                        const latDir = matches[4];
+                        const lngDeg = parseFloat(matches[5]);
+                        const lngMin = parseFloat(matches[6]);
+                        const lngSec = parseFloat(matches[7]);
+                        const lngDir = matches[8];
+            
+                        const lat = latDeg + latMin / 60 + latSec / 3600 * (latDir === 'S' ? -1 : 1);
+                        const lng = lngDeg + lngMin / 60 + lngSec / 3600 * (lngDir === 'W' ? -1 : 1);
+            
+                        // Display location on OpenStreetMap
+                        const map = L.map('map').setView([lat, lng], 15);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        }).addTo(map);
+                        L.marker([lat, lng]).addTo(map)
+                            .bindPopup('Location').openPopup();
+                    });
+
+                    
+                </script>
+                
+                <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+                   <!-- <a class="link" onclick="displayCheckedSentence()"> Click here to view Schedule </a>
+                    <div id="displayChecked"></div>
+
+
+                    <label for="bio">Bio:</label><br>
+            <textarea class="input-field" id="bio" name="bio" rows="4" cols="50"></textarea>
+            <button id="saveBio" class="submit">Save Bio</button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
+        
+   
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAnxon6V96vmKgTmocQEd6VJkZWKgRGfk",
+      authDomain: "webp-ff448.firebaseapp.com",
+      databaseURL: "https://webp-ff448-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "webp-ff448",
+      storageBucket: "webp-ff448.appspot.com",
+      messagingSenderId: "362268597099",
+      appId: "1:362268597099:web:d9674bc4fc811f9c890a2e"
+    };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const storage = getStorage(app);
+        const userCreds = JSON.parse(sessionStorage.getItem("user-creds"));
+
+// Function to display map with coordinates
+const displayMap = (lat, lng) => {
+    const map = L.map('map').setView([lat, lng], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup('Location').openPopup();
+};
+
+// Function to save location to Firestore
+const saveLocation = async (lat, lng) => {
+    const userRef = doc(db, 'UserAuthList', userCreds.uid);
+    await setDoc(userRef, { location: `${lat},${lng}` }, { merge: true });
+    console.log('Location saved in Firestore.');
+};
+
+const convertDecimalToDMS = (decimal) => {
+    const degrees = Math.floor(Math.abs(decimal));
+    const minutes = Math.floor((Math.abs(decimal) - degrees) * 60);
+    const seconds = Math.round(((Math.abs(decimal) - degrees) * 60 - minutes) * 60);
+    return `${degrees}°${minutes}′${seconds}″`;
+};
+
+// Function to load and display saved location from Firestore
+const loadLocation = async () => {
+    const docRef = doc(db, 'UserAuthList', userCreds.uid);
+    const docSnap = await getDoc(docRef);
+    const userData = docSnap.data();
+    if (userData && userData.location) {
+        const [lat, lng] = userData.location.split(',');
+        const latDMS = convertDecimalToDMS(lat);
+        const lngDMS = convertDecimalToDMS(lng);
+        document.getElementById('location').textContent = `Location: ${latDMS} ${lat > 0 ? 'N' : 'S'} ${lngDMS} ${lng > 0 ? 'E' : 'W'}`;
+        displayMap(parseFloat(lat), parseFloat(lng));
+    }
+};
+
+
+
+window.addEventListener('load', loadLocation);
+
+
+document.getElementById('locationForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('locationInput').value.trim();
+  
+});
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('locationForm');
+    document.getElementById('locationForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('locationInput').value.trim();
+    if (!input) {
+        alert('Please enter coordinates.');
+        return;
+    }
+
+    const regex = /(\d+)°(\d+)′(\d+)″([NS])\s*(\d+)°(\d+)′(\d+)″([EW])/;
+    const matches = input.match(regex);
+    if (!matches) {
+        alert('Invalid coordinates format.');
+        return;
+    }
+
+    const latDeg = parseFloat(matches[1]);
+    const latMin = parseFloat(matches[2]);
+    const latSec = parseFloat(matches[3]);
+    const latDir = matches[4];
+    const lngDeg = parseFloat(matches[5]);
+    const lngMin = parseFloat(matches[6]);
+    const lngSec = parseFloat(matches[7]);
+    const lngDir = matches[8];
+
+    const lat = latDeg + latMin / 60 + latSec / 3600 * (latDir === 'S' ? -1 : 1);
+    const lng = lngDeg + lngMin / 60 + lngSec / 3600 * (lngDir === 'W' ? -1 : 1);
+
+    await saveLocation(lat, lng); // Call the saveLocation function to save the coordinates to Firestore
+    alert('Location saved successfully!');
+
+    // Display the location on the map
+    displayMap(lat, lng);
+});
+
+});
+
+
+
+
+
+        const getUserData = async () => {
+        const docRef = doc(db, 'UserAuthList', userCreds.uid);
+        const docSnap = await getDoc(docRef);
+        const userData = docSnap.data();
+        document.getElementById('firstName').textContent = `First Name: ${userData.firstname}`;
+        document.getElementById('lastName').textContent = `Last Name: ${userData.lastname}`;
+        document.getElementById('businessName').textContent = `Business Name: ${userData.Businessname}`;
+        document.getElementById('phone').textContent = `Phone: ${userData.phone}`;
+        document.getElementById('email').textContent = `Email: ${userData.email}`;
+       
+      
+    };
+
+    
+getUserData();
+
+const saveImage = async (file) => {
+    const storageRef = ref(storage, `images/${userCreds.uid}/profile.jpg`);
+    await uploadBytes(storageRef, file);
+    
+};
+
+const savePicture = document.getElementById('savePicture');
+savePicture.addEventListener('click', async () => {
+    const file = document.getElementById('image').files[0];
+    await saveImage(file);
+    alert('Image saved successfully!');
+});
+
+const getImageURL = async () => {
+    const storageRef = ref(storage, `images/${userCreds.uid}/profile.jpg`);
+    const url = await getDownloadURL(storageRef);
+    return url;
+};
+
+// Display the selected image before saving
+const displaySelectedImage = () => {
+    const file = document.getElementById('image').files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('myimg').src = e.target.result;
+            document.getElementById('myimg').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+// Call displaySelectedImage when a file is selected
+document.getElementById('image').addEventListener('change', displaySelectedImage);
+
+// Display the saved image when the user logs in
+const displayImage = async () => {
+    const storageRef = ref(storage, `images/${userCreds.uid}/profile.jpg`);
+    try {
+        const url = await getDownloadURL(storageRef);
+        document.getElementById('myimg').src = url;
+    } catch (error) {
+        console.error('Error loading image:', error);
+        // You can set a default image here if needed
+        document.getElementById('myimg').src = 'C:\Users\dell\Desktop\pics\pic.jpg';
+    }
+};
+
+// Call displayImage when the page loads
+window.addEventListener('load', () => {
+    displayImage();
+});
+
+
+    const savePictureBtn = document.getElementById('savePicture');
+    savePictureBtn.addEventListener('click', async () => {
+        const file = document.getElementById('image').files[0];
+        await saveImage(file);
+        alert('Image saved successfully!');
+    });
+
+    displayImage();
+
+
+
+
+
+
+        const editScheduleBtn = document.getElementById('editSchedule');
+        editScheduleBtn.addEventListener('click', () => {
+            const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+            days.forEach(day => {
+                document.getElementById(day).checked = false;
+            });
+            document.getElementById('schedule').textContent = '';
+        });
+
+        function displayCheckedSentence() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checkedDays = [];
+            
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    checkedDays.push(checkbox.id);
+                }
+            });
+            
+            const displayCheckedDiv = document.getElementById('displayChecked');
+            displayCheckedDiv.textContent = "" + checkedDays.join(', ');
+        }
+
+
+        const bioInput = document.getElementById('bio');
+const saveBioBtn = document.getElementById('saveBio');
+
+saveBioBtn.addEventListener('click', async () => {
+    const bio = bioInput.value.trim();
+    if (!bio) {
+        alert('Please enter your bio.');
+        return;
+    }
+
+    const userRef = doc(db, 'UserAuthList', userCreds.uid);
+    await setDoc(userRef, { bio }, { merge: true });
+    console.log('Bio saved in Firestore.');
+
+    // Optionally, you can update a display element with the saved bio
+});
+
+        // Save bio to Firestore
+const saveBio = async (bio) => {
+    const userRef = doc(db, 'UserAuthList', userCreds.uid);
+    await setDoc(userRef, { bio }, { merge: true });
+    console.log('Bio saved in Firestore.');
+};
+
+// Retrieve bio from Firestore
+const getBio = async () => {
+    const docRef = doc(db, 'UserAuthList', userCreds.uid);
+    const docSnap = await getDoc(docRef);
+    const userData = docSnap.data();
+    return userData.bio || '';
+};
+
+// Display bio on the page
+const displayBio = async () => {
+    const bio = await getBio();
+    document.getElementById('bio').value = bio;
+};
+
+// Save bio when the form is submitted
+scheduleForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const bio = document.getElementById('bio').value;
+    await saveBio(bio);
+    alert('Bio saved successfully!');
+});
+
+// Display bio when the page loads
+displayBio();
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>

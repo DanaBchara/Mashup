@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAPAPP | Login & Registration</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+ <div class="wrapper">
+    <nav class="nav">
+	
+        <div class="nav-logo">
+            <p style="font-weight: 100">Select your working:</p>
+			</div>
+			        <div class="nav-menu" id="navMenu">
+            <ul>
+                <li><a href="pProfile.html" class="link" onclick="register()">Back</a></li>
+                
+            </ul>
+        
+        </div>  
+		
+  </nav>
+	    
+
+<style>
+body {
+ color: White;
+font-family: Arial, sans-serif;
+}
+
+table {
+width: 30%;
+margin-bottom: 20px;
+background: linear-gradient(rgba(39,39,39, 0.6), transparent);
+}
+
+th, td {
+border: 1px solid #ddd;
+padding: 7px;
+text-align: center;
+}
+
+th {
+background-color: #f2f2f2;
+}
+
+button {
+    width: 130px;
+    height: 40px;
+    font-weight: 500;
+    background: rgba(236, 154, 67, 0.8);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: .3s ease;
+}
+
+button:hover {
+background-color:rgba(255, 255, 255, 0.5);
+}
+</style>
+<body>
+
+<table id="days" >
+<tr>
+<td>Sunday</td>
+<td><input type="checkbox" id="Sunday"></td>
+</tr>
+<tr>
+<td>Monday</td>
+<td><input type="checkbox" id="Monday"></td>
+</tr>
+<tr>
+<td>Tuesday</td>
+<td><input type="checkbox" id="Tuesday"></td>
+</tr>
+<tr>
+<td>Wednesday</td>
+<td><input type="checkbox" id="Wednesday"></td>
+</tr>
+<tr>
+<td>Thursday</td>
+<td><input type="checkbox" id="Thursday"></td>
+</tr>
+<tr>
+<td>Friday</td>
+<td><input type="checkbox" id="Friday"></td>
+</tr>
+<tr>
+<td>Saturday</td>
+<td><input type="checkbox" id="Saturday"></td>
+</tr>
+</table>
+<div>
+<label style="position:relative;bottom:3px;right:300px;color:black;margin-right:10px"  type="text" >Select Days </label>
+
+
+              <!--<a class="link" style="position:relative;bottom:10px;right:300px;" onclick="displayCheckedSentence()"> Click here </a>
+                
+				<div style="position:relative;bottom:-320px;right:400px;"  id="displayChecked"></div>
+           
+<button onclick="displayCheckedSentence()">Checked</button>-->
+<div class="input-box">
+<label style="position:relative;bottom:-310px;right:-200px;" type="text" >Are you ready?</label>
+ 
+			<a href="pProfile.html">
+                <input type="submit"  class="submit" value="Done" style="position:relative;bottom:-310px;right:-200px;"> </a>
+            </div>
+
+
+
+<label style="position:relative;bottom:50px;right:-200px;" type="text" >Select Hours</label>
+<table style="position:relative;bottom:50px;right:-200px;color:black;margin-right:10px">
+<tr>
+<td>START WORK</td>
+<td>  <select   id="hours" name="hours">
+        <option value="12">12am</option>
+        <option value="1">1am</option>
+        <option value="2">2am</option>
+        <option value="3">3am</option>
+        <option value="4">4am</option>
+        <option value="5">5am</option>
+        <option value="6">6am</option>
+        <option value="7">7am</option>
+        <option value="8">8am</option>
+        <option value="9">9am</option>
+        <option value="10">10am</option>
+        <option value="11">11am</option>
+		   <option value="12">12pm</option>
+        <option value="1">1pm</option>
+        <option value="2">2pm</option>
+        <option value="3">3pm</option>
+        <option value="4">4pm</option>
+        <option value="5">5pm</option>
+        <option value="6">6pm</option>
+        <option value="7">7pm</option>
+        <option value="8">8pm</option>
+        <option value="9">9pm</option>
+        <option value="10">10pm</option>
+        <option value="11">11pm</option>     
+    </select></td>
+</tr>
+<tr>
+<td>END WORK</td>
+<td>  <select   id="hours" name="hours">
+        <option value="12">12am</option>
+        <option value="1">1am</option>
+        <option value="2">2am</option>
+        <option value="3">3am</option>
+        <option value="4">4am</option>
+        <option value="5">5am</option>
+        <option value="6">6am</option>
+        <option value="7">7am</option>
+        <option value="8">8am</option>
+        <option value="9">9am</option>
+        <option value="10">10am</option>
+        <option value="11">11am</option>
+		   <option value="12">12pm</option>
+        <option value="1">1pm</option>
+        <option value="2">2pm</option>
+        <option value="3">3pm</option>
+        <option value="4">4pm</option>
+        <option value="5">5pm</option>
+        <option value="6">6pm</option>
+        <option value="7">7pm</option>
+        <option value="8">8pm</option>
+        <option value="9">9pm</option>
+        <option value="10">10pm</option>
+        <option value="11">11pm</option>     
+    </select></td>
+</tr>
+<tr>
+<td>START BREAK</td>
+<td>  <select   id="hours" name="hours">
+        <option value="12">12am</option>
+        <option value="1">1am</option>
+        <option value="2">2am</option>
+        <option value="3">3am</option>
+        <option value="4">4am</option>
+        <option value="5">5am</option>
+        <option value="6">6am</option>
+        <option value="7">7am</option>
+        <option value="8">8am</option>
+        <option value="9">9am</option>
+        <option value="10">10am</option>
+        <option value="11">11am</option>
+		   <option value="12">12pm</option>
+        <option value="1">1pm</option>
+        <option value="2">2pm</option>
+        <option value="3">3pm</option>
+        <option value="4">4pm</option>
+        <option value="5">5pm</option>
+        <option value="6">6pm</option>
+        <option value="7">7pm</option>
+        <option value="8">8pm</option>
+        <option value="9">9pm</option>
+        <option value="10">10pm</option>
+        <option value="11">11pm</option>     
+    </select></td>
+</tr>
+<tr>
+<td>END BREAK</td>
+<td>  <select   id="hours" name="hours">
+        <option value="12">12am</option>
+        <option value="1">1am</option>
+        <option value="2">2am</option>
+        <option value="3">3am</option>
+        <option value="4">4am</option>
+        <option value="5">5am</option>
+        <option value="6">6am</option>
+        <option value="7">7am</option>
+        <option value="8">8am</option>
+        <option value="9">9am</option>
+        <option value="10">10am</option>
+        <option value="11">11am</option>
+		   <option value="12">12pm</option>
+        <option value="1">1pm</option>
+        <option value="2">2pm</option>
+        <option value="3">3pm</option>
+        <option value="4">4pm</option>
+        <option value="5">5pm</option>
+        <option value="6">6pm</option>
+        <option value="7">7pm</option>
+        <option value="8">8pm</option>
+        <option value="9">9pm</option>
+        <option value="10">10pm</option>
+        <option value="11">11pm</option>     
+    </select></td>
+</tr>
+
+
+
+</table>
+<!--
+<label style="position:relative;bottom:-90px;right:160px;" type="text" >Select your break hours</label>
+<table style="position:relative;bottom:-90px;right:-100px;color:black;margin-right:10px">
+<tr>
+<td>Start Hours</td>
+<td>  <select   id="hours" name="hours">
+        <option value="12">12am</option>
+        <option value="1">1am</option>
+        <option value="2">2am</option>
+        <option value="3">3am</option>
+        <option value="4">4am</option>
+        <option value="5">5am</option>
+        <option value="6">6am</option>
+        <option value="7">7am</option>
+        <option value="8">8am</option>
+        <option value="9">9am</option>
+        <option value="10">10am</option>
+        <option value="11">11am</option>
+		   <option value="12">12pm</option>
+        <option value="1">1pm</option>
+        <option value="2">2pm</option>
+        <option value="3">3pm</option>
+        <option value="4">4pm</option>
+        <option value="5">5pm</option>
+        <option value="6">6pm</option>
+        <option value="7">7pm</option>
+        <option value="8">8pm</option>
+        <option value="9">9pm</option>
+        <option value="10">10pm</option>
+        <option value="11">11pm</option>     
+    </select></td>
+</tr>
+<tr>
+<td>END Hours</td>
+<td>  <select   id="hours" name="hours">
+        <option value="12">12am</option>
+        <option value="1">1am</option>
+        <option value="2">2am</option>
+        <option value="3">3am</option>
+        <option value="4">4am</option>
+        <option value="5">5am</option>
+        <option value="6">6am</option>
+        <option value="7">7am</option>
+        <option value="8">8am</option>
+        <option value="9">9am</option>
+        <option value="10">10am</option>
+        <option value="11">11am</option>
+		   <option value="12">12pm</option>
+        <option value="1">1pm</option>
+        <option value="2">2pm</option>
+        <option value="3">3pm</option>
+        <option value="4">4pm</option>
+        <option value="5">5pm</option>
+        <option value="6">6pm</option>
+        <option value="7">7pm</option>
+        <option value="8">8pm</option>
+        <option value="9">9pm</option>
+        <option value="10">10pm</option>
+        <option value="11">11pm</option>     
+    </select></td>
+</tr>
+</table>
+-->
+
+
+
+
+
+
+
+
+
+
+	</div>
+	<!--
+<label style="position:relative;top:-30px;right:1px;" type="text" >Select the STARTING hours at which you take appointments: </label>
+
+   <select  id="hours" name="hours">
+        <option value="12">12am</option>
+        <option value="1">1am</option>
+        <option value="2">2am</option>
+        <option value="3">3am</option>
+        <option value="4">4am</option>
+        <option value="5">5am</option>
+        <option value="6">6am</option>
+        <option value="7">7am</option>
+        <option value="8">8am</option>
+        <option value="9">9am</option>
+        <option value="10">10am</option>
+        <option value="11">11am</option>
+		   <option value="12">12pm</option>
+        <option value="1">1pm</option>
+        <option value="2">2pm</option>
+        <option value="3">3pm</option>
+        <option value="4">4pm</option>
+        <option value="5">5pm</option>
+        <option value="6">6pm</option>
+        <option value="7">7pm</option>
+        <option value="8">8pm</option>
+        <option value="9">9pm</option>
+        <option value="10">10pm</option>
+        <option value="11">11pm</option>
+       
+    </select>
+-->
+</div>
+<script>
+function displayCheckedSentence() {
+const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+const checkedDays = [];
+
+checkboxes.forEach(checkbox => {
+if (checkbox.checked) {
+checkedDays.push(checkbox.id);
+}
+});
+
+const displayCheckedDiv = document.getElementById('displayChecked');
+displayCheckedDiv.textContent = "" + checkedDays.join(', ');
+}
+
+function goToAnotherPage() {
+window.location.href = 'anotherPage.html';
+}
+
+</script>
+
+<!--
+<script>
+    let UserCreds = JSON.parse(sessionStorage.getItem("user-creds"));
+    let UserInfo = JSON.parse(sessionStorage.getItem("user-info"));
+    
+    let GreetHead = document.getElementById('greet');
+    let MsgHead = document.getElementById('msg');
+    let SignoutBtn = document.getElementById('signoutbutton');
+    
+    
+    
+    let Signout =() =>{
+      sessionStorage.removeItem("user-creds");
+      sessionStorage.removeItem("user-info");
+      window.location.href ='pL.html'
+    }
+    let CheckCred =() =>{
+      if (!sessionStorage.getItem("user-creds"))
+      window.location.href ='pL.html'
+    
+        else{
+          GreetHead.innerText = `Welcome ${UserInfo.firstname} ${UserInfo.lastname}!`;
+    MsgHead.innerText = `User with email "${UserCreds.email}" logged in`;
+        }
+    
+    }
+    window.addEventListener('load', CheckCred);
+    SignoutBtn.addEventListener('click', Signout);
+    
+    
+    </script>
+ -->
+    
+ </body> 
+ </body> 
+
+</html>

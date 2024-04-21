@@ -1,0 +1,204 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAPAPP | Login & Registration</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css" >
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+ <div class="wrapper">
+    <nav class="nav">
+	
+        <div class="nav-logo">
+           <p style="font-weight: 100">Your Profile:</p>
+			</div>
+			        <div class="nav-menu" id="navMenu">
+            <ul>
+                <li><a href="pIcons.html" class="link" onclick="register()">Back</a></li>
+                
+            </ul>
+        
+        </div>  
+       
+  </nav>
+
+
+<body>
+
+  <div class="nav-menu" id="navMenu" style="position:relative;top:-100px;left:20px">
+    <p sstyle="font-size: small" id="greet"></p>
+    <br>
+    <h2 style="font-size: small" id="msg"></h2>
+
+</div>  
+
+
+
+
+
+  <div class="form-box" style="position:relative;top:-100px;right:50px">
+        
+    <img id="preview" src="C:\Users\dell\Desktop\pics\image.jpg"  style="width: 100px; height: 80px;">
+    <br>
+    <div class="input-box">
+    
+    <label for="profilePicture" class="submit">ADD</label>
+    <input type="file" id="profilePicture" accept="image/*">
+  
+        </div>
+      </div>
+  
+  <script>
+      const profilePictureInput = document.getElementById('profilePicture');
+      const profilePicturePreview = document.getElementById('preview');
+      profilePictureInput.addEventListener('change', () => {
+          const file = profilePictureInput.files[0];
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                  profilePicturePreview.src = e.target.result;
+              };
+              reader.readAsDataURL(file);
+          } else {
+              profilePicturePreview.src = '';
+          }
+      });
+  </script>
+    <div class="input-box">
+      
+
+    <form id="locationForm">
+        <label class="input-field" for="locationLink">Google Maps Location Link:</label>
+        <input type="text" class="input-field" id="locationLink" name="locationLink" required>
+        <button class="submit" type="submit">Convert</button>
+    </form>
+    </div>
+    <div id="locationText"></div>
+
+    <script>
+        document.getElementById("locationForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const locationLink = document.getElementById("locationLink").value;
+            const locationText = document.getElementById("locationText");
+
+            const url = new URL(locationLink);
+            const query = url.searchParams.get("q");
+
+            if (query) {
+                const [latitude, longitude] = query.split(",");
+                const googleMapsUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+
+                fetch(googleMapsUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.address) {
+                            const address = `${data.address.road ? data.address.road + ", " : ""}${data.address.city ? data.address.city + ", " : ""}${data.address.country ? data.address.country : ""}`;
+                            locationText.innerHTML = `Address: ${address}`;
+                        } else {
+                            locationText.innerHTML = "Failed to fetch address information.";
+                        }
+                    })
+                    .catch(error => {
+                        locationText.innerHTML = "Failed to fetch address information.";
+                    });
+            } else {
+                locationText.innerHTML = "Invalid Google Maps link. Please provide a valid link.";
+            }
+        });
+    </script>
+     
+<div>
+<a href="pSc.html" class="clickable-image">
+<img src="C:\Users\dell\Desktop\pics\hours.jpg" style="position:relative;top:150px;right:300px; width: 100px; height: 80px;">
+</a>
+</div>
+<label style="position:relative;top:150px;right:300px;" type="text" >Select Hours</label>
+
+
+
+<script>
+   
+   function myMenuFunction() {
+    var i = document.getElementById("navMenu");
+
+    if(i.className === "nav-menu") {
+        i.className += " responsive";
+    } else {
+        i.className = "nav-menu";
+    }
+   }
+ 
+</script>
+
+<script>
+
+    var a = document.getElementById("loginBtn");
+    var b = document.getElementById("registerBtn");
+    var x = document.getElementById("login");
+    var y = document.getElementById("register");
+
+    function login() {
+        x.style.left = "4px";
+        y.style.right = "-520px";
+        a.className += " white-btn";
+        b.className = "btn";
+        x.style.opacity = 1;
+        y.style.opacity = 0;
+    }
+
+    function register() {
+        x.style.left = "-510px";
+        y.style.right = "5px";
+        a.className = "btn";
+        b.className += " white-btn";
+        x.style.opacity = 0;
+        y.style.opacity = 1;
+    }
+	
+
+
+
+    
+	/*function validateForm() {
+const un = document.getElementById('un').value;
+const ps = document.getElementById('ps').value;
+const fn = document.getElementById('fn').value;
+const ln = document.getElementById('ln').value;
+const bn = document.getElementById('bn').value;
+const pw = document.getElementById('pw').value;
+const em = document.getElementById('em').value;
+
+if (un === '' || ps === '' || fn === '' || ln === '' || bn === '' || em === '' || pw === '') {
+errorMessage.textContent = 'Required to fill the fields.';
+return false; // Prevent form submission
+} else {
+errorMessage.textContent = ''; // Clear any previous error message
+// Add your further logic or actions here
+return true; // Allow form submission
+}
+}*/
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+

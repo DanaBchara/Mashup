@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAPAPP | Login & Registration</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+ <div class="wrapper">
+    <nav class="nav">
+      <div class="nav-logo">
+        <p style="font-weight: 100">WELCOME TO MESHUP BUSINESS SIDE</p>
+    </div>
+        <!--<div class="nav-logo">
+
+          <p style="font-weight: 100" id="greet"></p>
+           <h2 style="font-weight: 100" id="msg"></h2>
+			</div>-->
+			        <div class="nav-menu" id="navMenu">
+            <ul>
+                <li><a href="pL.html" id="signoutbutton" class="link" >Sign out</a></li>
+                
+            </ul>
+        
+        </div>  
+		
+  </nav>
+  <style>
+  img {
+    width: 100px;
+    height: 80px;
+  }
+</style>
+	    
+
+<div>
+<a href="" class="clickable-image">
+<img src="C:\Users\dell\Desktop\pics\mopp.jpg" style="position:relative;bottom:100px;right:10px;">
+</a>
+</div>
+<label style="position:relative;bottom:100px;right:10px;" type="text" >Manage Appointments</label>
+<div>
+<a href="" class="clickable-image">
+<img src="C:\Users\dell\Desktop\pics\msch.jpg" style="position:relative;bottom:100px;left:100px;">
+</a>
+</div>
+<label style="position:relative;bottom:100px;left:100px;" type="text" >Manage Schedule</label>
+<div>
+<a href="pr.html" class="clickable-image">
+<img src="C:\Users\dell\Desktop\pics\profile.jpg" style="position:relative;top:100px;right:300px;">
+</a>
+</div>
+<label style="position:relative;top:100px;right:300px;" type="text" >Profile details</label>
+
+ 
+
+
+</div>
+
+
+
+
+<script>
+let UserCreds = JSON.parse(sessionStorage.getItem("user-creds"));
+let UserInfo = JSON.parse(sessionStorage.getItem("user-info"));
+
+let GreetHead = document.getElementById('greet');
+let MsgHead = document.getElementById('msg');
+let SignoutBtn = document.getElementById('signoutbutton');
+
+
+
+let Signout =() =>{
+  sessionStorage.removeItem("user-creds");
+  sessionStorage.removeItem("user-info");
+  window.location.href ='pL.html'
+}
+let CheckCred =() =>{
+  if (!sessionStorage.getItem("user-creds"))
+  window.location.href ='pL.html'
+
+    else{
+      GreetHead.innerText = `Welcome ${UserInfo.firstname} ${UserInfo.lastname}!`;
+MsgHead.innerText = `User with email "${UserCreds.email}" logged in`;
+    }
+
+}
+window.addEventListener('load', CheckCred);
+SignoutBtn.addEventListener('click', Signout);
+
+
+</script>
+
+</body> 
+</html>
+

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAPAPP | Login & Registration</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <nav class="nav">
+            <div class="nav-logo">
+                <p style="font-weight: 100">Select your working:</p>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <ul>
+                    <li><a href="pProfile.html" class="link" onclick="register()">Back</a></li>
+                </ul>
+            </div>  
+            <div class="input-box">
+                <button class="submit">Save Schedule</button>
+            </div>
+        </nav>
+
+        <style>
+            body {
+                color: white;
+                font-family: Arial, sans-serif;
+            }
+
+            table {
+                width: 30%;
+                margin-bottom: 20px;
+                background: linear-gradient(rgba(39,39,39, 0.6), transparent);
+            }
+
+            th, td {
+                border: 1px solid #ddd;
+                padding: 7px;
+                text-align: center;
+            }
+
+            th {
+                background-color: #f2f2f2;
+            }
+
+            button {
+                width: 130px;
+                height: 40px;
+                font-weight: 500;
+                background: rgba(236, 154, 67, 0.8);
+                border: none;
+                border-radius: 30px;
+                cursor: pointer;
+                transition: .3s ease;
+            }
+
+            button:hover {
+                background-color: rgba(255, 255, 255, 0.5);
+            }
+        </style>
+
+        <body>
+            <table id="scheduleForm">
+                <tr>
+                    <td><input type="checkbox" id="Sunday" onclick="showTable('Sunday')"> Sunday</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" id="Monday" onclick="showTable('Monday')"> Monday</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" id="Tuesday" onclick="showTable('Tuesday')"> Tuesday</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" id="Wednesday" onclick="showTable('Wednesday')"> Wednesday</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" id="Thursday" onclick="showTable('Thursday')"> Thursday</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" id="Friday" onclick="showTable('Friday')"> Friday</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" id="Saturday" onclick="showTable('Saturday')"> Saturday</td>
+                </tr>
+            </table>
+
+            <div id="scheduleTables"></div>
+
+            <script>
+                let scheduleTables = document.getElementById('scheduleTables');
+                let currentTables = {};
+
+                function showTable(day) {
+                    if (document.getElementById(day).checked) {
+                        createTable(day);
+                    } else {
+                        removeTable(day);
+                    }
+                }
+
+                function createTable(day) {
+                    if (!currentTables[day]) {
+                        let table = document.createElement('table');
+                        table.id = day + 'Table';
+                        table.style.width = '30%';
+                        table.style.marginBottom = '20px';
+                        table.style.background = 'linear-gradient(rgba(39,39,39, 0.6), transparent)';
+
+                        let row = table.insertRow();
+                        let th1 = row.insertCell();
+                        let th2 = row.insertCell();
+                        th1.innerHTML = 'Start Hour';
+                        th2.innerHTML = 'End Hour';
+
+                        let addRowButton = document.createElement('button');
+                        addRowButton.textContent = 'Add Row';
+                        addRowButton.addEventListener('click', () => addRow(table));
+
+                        table.appendChild(addRowButton);
+
+                        let tableTitle = document.createElement('h3');
+                        tableTitle.textContent = day;
+                        scheduleTables.appendChild(tableTitle);
+                        scheduleTables.appendChild(table);
+
+                        currentTables[day] = table;
+                    }
+                }
+
+                function removeTable(day) {
+                    if (currentTables[day]) {
+                        let table = currentTables[day];
+                        let tableTitle = table.previousSibling;
+                        scheduleTables.removeChild(tableTitle);
+                        scheduleTables.removeChild(table);
+                        delete currentTables[day];
+                    }
+                }
+
+                function addRow(table) {
+                    let row = table.insertRow();
+                    let startHourCell = row.insertCell();
+                    let endHourCell = row.insertCell();
+                    startHourCell.innerHTML = '<input type="time" placeholder="Start Hour">';
+                    endHourCell.innerHTML = '<input type="time" placeholder="End Hour">';
+                }
+            </script>
+        </body>
+    </div>
+</body>
+</html>
