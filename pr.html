@@ -8,6 +8,47 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="style.css">
 </head>
+<style>
+
+    .wrap{
+        width: 1200px;
+        margin:30px auto;
+        display: grid;
+        grid-gap: 50px;
+        grid-template-columns: 300px auto;
+    }
+    
+    .form input{
+        width: 100%;
+        border: none;
+        padding: 20px;
+        font-size: 1em;
+        outline: none;
+        margin-bottom: 5px;
+        background: #ddd;
+        border-radius: 10px;
+        box-sizing: border-box;
+        text-transform: capitalize;
+        -webkit-transition: all 0.5s ;
+        -moz-transition: all 0.5s ;
+        -ms-transition: all 0.5s ;
+        -o-transition: all 0.5s ;
+        transition: all 0.5s ;
+    }
+    .form input:focus{
+        background: #aaa;
+    }
+    .form .form__btn{
+        color: #fff;
+        background: rgb(63, 192, 46);
+    }
+    
+    #map{
+        width: 100%;
+        height: 500px;
+        border-radius: 10px;
+    }
+    </style>
 <body>
     
     <div class="wrapper">
@@ -16,9 +57,9 @@
                 <p style="font-weight: 100">WELCOME TO MESHUP BUSINESS SIDE</p>
                 <div id="map" style="width: 70%; height: 300px;"></div>
                 <form id="locationForm">
-                    <label for="locationInput">Enter location Longitude and Latitude </label>
-                    <input type="text" id="locationInput" name="locationInput">
-                    <button class="submit" style="font-size: 14px; padding: 6px 12px; margin-left: 4px;" type="submit">save Location</button>
+                    <input type="text" id="latitude" placeholder="Latitude" readonly>
+                    <input type="text" id="longitude" placeholder="Longitude" readonly>
+                    <button class="submit" style="font-size: 14px; padding: 6px 12px; margin-left: 4px;" type="submit">Save Location</button>
                 </form>
             </div>
             <div class="nav-menu" id="navMenu">
@@ -30,23 +71,18 @@
                 </ul>
             </div>
             <div class="input-box">
-               <!-- <a href="pE.html">
-                <button id="editSchedule" class="submit">Edit Schedule</button></a>-->
                 <button id="savePicture" class="submit">Save Picture</button>
                 <label for="image">
                     <img src="" alt="" id="myimg" style="width: 150px; height: 150px; ">
                 </label>
                 <input type="file" id="image" style="display: none;">
-                
             </div>
-            
         </nav>
 
         <!-- Profile box -->
         <div class="form-box">
             <div class="profile-container">
                 <header>User Profile</header>
-                
                 <div class="profile-info">
                     <p id="firstName"></p>
                     <p id="lastName"></p>
@@ -54,51 +90,48 @@
                     <p id="phone"></p>
                     <p id="email"></p>
                     <p id="location"></p>
-                   <!-- <img id="profilePicture" style="width: 100px; height: 80px;" />-->
-                    
-                  
-                
-                <script>
-                    const form = document.getElementById('locationForm');
-                    form.addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        const input = document.getElementById('locationInput').value.trim();
-                        if (!input) {
-                            alert('Please enter coordinates.');
-                            return;
-                        }
-            
-                        // Parse DMS format to decimal degrees
-                        const regex = /(\d+)°(\d+)′(\d+)″([NS])\s*(\d+)°(\d+)′(\d+)″([EW])/;
-                        const matches = input.match(regex);
-                        if (!matches) {
-                            alert('Invalid coordinates format.');
-                            return;
-                        }
-            
-                        const latDeg = parseFloat(matches[1]);
-                        const latMin = parseFloat(matches[2]);
-                        const latSec = parseFloat(matches[3]);
-                        const latDir = matches[4];
-                        const lngDeg = parseFloat(matches[5]);
-                        const lngMin = parseFloat(matches[6]);
-                        const lngSec = parseFloat(matches[7]);
-                        const lngDir = matches[8];
-            
-                        const lat = latDeg + latMin / 60 + latSec / 3600 * (latDir === 'S' ? -1 : 1);
-                        const lng = lngDeg + lngMin / 60 + lngSec / 3600 * (lngDir === 'W' ? -1 : 1);
-            
-                        // Display location on OpenStreetMap
-                        const map = L.map('map').setView([lat, lng], 15);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        }).addTo(map);
-                        L.marker([lat, lng]).addTo(map)
-                            .bindPopup('Location').openPopup();
-                    });
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    
-                </script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        let mapOptions = {
+            center: [33.8547, 35.8623], // Coordinates for Lebanon
+            zoom: 8 // Zoom level
+        }
+
+        let map = new L.map('map', mapOptions);
+
+        let layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+        map.addLayer(layer);
+        
+        let marker = null;
+        map.on('click', (event)=> {
+            if(marker !== null){
+                map.removeLayer(marker);
+            }
+        
+            marker = L.marker([event.latlng.lat , event.latlng.lng]).addTo(map);
+        
+            document.getElementById('latitude').value = event.latlng.lat;
+            document.getElementById('longitude').value = event.latlng.lng;
+        })
+
+     
+        window.addEventListener('load', () => {
+            loadLocation();
+        });
+
+        document.getElementById('locationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const lat = parseFloat(document.getElementById('latitude').value);
+            const lng = parseFloat(document.getElementById('longitude').value);
+            await saveLocation(lat, lng);
+        });
+    </script>
+
                 
                 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
@@ -131,103 +164,66 @@
       messagingSenderId: "362268597099",
       appId: "1:362268597099:web:d9674bc4fc811f9c890a2e"
     };
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         const storage = getStorage(app);
         const userCreds = JSON.parse(sessionStorage.getItem("user-creds"));
 
-// Function to display map with coordinates
-const displayMap = (lat, lng) => {
-    const map = L.map('map').setView([lat, lng], 15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-    L.marker([lat, lng]).addTo(map)
-        .bindPopup('Location').openPopup();
+// Function to format latitude and longitude
+const formatCoordinate = (coord, direction) => {
+    const absoluteCoord = Math.abs(coord);
+    const degrees = Math.floor(absoluteCoord);
+    const minutes = Math.floor((absoluteCoord - degrees) * 60);
+    const seconds = Math.round(((absoluteCoord - degrees) * 60 - minutes) * 60);
+
+    return `${degrees}°${minutes}′${seconds}″${direction}`;
 };
 
 // Function to save location to Firestore
 const saveLocation = async (lat, lng) => {
     const userRef = doc(db, 'UserAuthList', userCreds.uid);
-    await setDoc(userRef, { location: `${lat},${lng}` }, { merge: true });
+    await setDoc(userRef, { latitude: lat, longitude: lng, location: `${formatCoordinate(lat, lat >= 0 ? 'N' : 'S')} ${formatCoordinate(lng, lng >= 0 ? 'E' : 'W')}` }, { merge: true });
     console.log('Location saved in Firestore.');
 };
 
-const convertDecimalToDMS = (decimal) => {
-    const degrees = Math.floor(Math.abs(decimal));
-    const minutes = Math.floor((Math.abs(decimal) - degrees) * 60);
-    const seconds = Math.round(((Math.abs(decimal) - degrees) * 60 - minutes) * 60);
-    return `${degrees}°${minutes}′${seconds}″`;
-};
-
-// Function to load and display saved location from Firestore
+// Function to load location from Firestore
 const loadLocation = async () => {
-    const docRef = doc(db, 'UserAuthList', userCreds.uid);
-    const docSnap = await getDoc(docRef);
+    const userRef = doc(db, 'UserAuthList', userCreds.uid);
+    const docSnap = await getDoc(userRef);
     const userData = docSnap.data();
-    if (userData && userData.location) {
-        const [lat, lng] = userData.location.split(',');
-        const latDMS = convertDecimalToDMS(lat);
-        const lngDMS = convertDecimalToDMS(lng);
-        document.getElementById('location').textContent = `Location: ${latDMS} ${lat > 0 ? 'N' : 'S'} ${lngDMS} ${lng > 0 ? 'E' : 'W'}`;
-        displayMap(parseFloat(lat), parseFloat(lng));
+    if (userData && userData.latitude && userData.longitude) {
+        const lat = userData.latitude;
+        const lng = userData.longitude;
+        marker = L.marker([lat, lng]).addTo(map);
+        map.setView([lat, lng], 12); // Set the view to the saved location
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+        document.getElementById('location').textContent = `Location: ${userData.location}`;
+        displayMap(userData.latitude, userData.longitude);
     }
 };
 
+// Call loadLocation when the page loads
+window.addEventListener('load', () => {
+    loadLocation();
+});
 
-
-window.addEventListener('load', loadLocation);
-
-
+// Event listener for the location form submission
 document.getElementById('locationForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const input = document.getElementById('locationInput').value.trim();
-  
-});
-
-    document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('locationForm');
-    document.getElementById('locationForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const input = document.getElementById('locationInput').value.trim();
-    if (!input) {
-        alert('Please enter coordinates.');
-        return;
-    }
-
-    const regex = /(\d+)°(\d+)′(\d+)″([NS])\s*(\d+)°(\d+)′(\d+)″([EW])/;
-    const matches = input.match(regex);
-    if (!matches) {
-        alert('Invalid coordinates format.');
-        return;
-    }
-
-    const latDeg = parseFloat(matches[1]);
-    const latMin = parseFloat(matches[2]);
-    const latSec = parseFloat(matches[3]);
-    const latDir = matches[4];
-    const lngDeg = parseFloat(matches[5]);
-    const lngMin = parseFloat(matches[6]);
-    const lngSec = parseFloat(matches[7]);
-    const lngDir = matches[8];
-
-    const lat = latDeg + latMin / 60 + latSec / 3600 * (latDir === 'S' ? -1 : 1);
-    const lng = lngDeg + lngMin / 60 + lngSec / 3600 * (lngDir === 'W' ? -1 : 1);
-
-    await saveLocation(lat, lng); // Call the saveLocation function to save the coordinates to Firestore
-    alert('Location saved successfully!');
-
-    // Display the location on the map
-    displayMap(lat, lng);
-});
-
+    const lat = parseFloat(document.getElementById('latitude').value);
+    const lng = parseFloat(document.getElementById('longitude').value);
+    await saveLocation(lat, lng);
 });
 
 
-
-
+        const savePictureBtn = document.getElementById('savePicture');
+        savePictureBtn.addEventListener('click', async () => {
+            const file = document.getElementById('image').files[0];
+            await saveImage(file);
+            alert('Image saved successfully!');
+        });
 
         const getUserData = async () => {
         const docRef = doc(db, 'UserAuthList', userCreds.uid);
@@ -245,18 +241,13 @@ document.getElementById('locationForm').addEventListener('submit', async (e) => 
     
 getUserData();
 
+
 const saveImage = async (file) => {
     const storageRef = ref(storage, `images/${userCreds.uid}/profile.jpg`);
     await uploadBytes(storageRef, file);
     
 };
 
-const savePicture = document.getElementById('savePicture');
-savePicture.addEventListener('click', async () => {
-    const file = document.getElementById('image').files[0];
-    await saveImage(file);
-    alert('Image saved successfully!');
-});
 
 const getImageURL = async () => {
     const storageRef = ref(storage, `images/${userCreds.uid}/profile.jpg`);
@@ -289,7 +280,7 @@ const displayImage = async () => {
     } catch (error) {
         console.error('Error loading image:', error);
         // You can set a default image here if needed
-        document.getElementById('myimg').src = 'C:\Users\dell\Desktop\pics\pic.jpg';
+        document.getElementById('myimg').src = 'C:\\Users\\dell\\Desktop\\pics\\pic.jpg';
     }
 };
 
@@ -297,105 +288,6 @@ const displayImage = async () => {
 window.addEventListener('load', () => {
     displayImage();
 });
-
-
-    const savePictureBtn = document.getElementById('savePicture');
-    savePictureBtn.addEventListener('click', async () => {
-        const file = document.getElementById('image').files[0];
-        await saveImage(file);
-        alert('Image saved successfully!');
-    });
-
-    displayImage();
-
-
-
-
-
-
-        const editScheduleBtn = document.getElementById('editSchedule');
-        editScheduleBtn.addEventListener('click', () => {
-            const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-            days.forEach(day => {
-                document.getElementById(day).checked = false;
-            });
-            document.getElementById('schedule').textContent = '';
-        });
-
-        function displayCheckedSentence() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            const checkedDays = [];
-            
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    checkedDays.push(checkbox.id);
-                }
-            });
-            
-            const displayCheckedDiv = document.getElementById('displayChecked');
-            displayCheckedDiv.textContent = "" + checkedDays.join(', ');
-        }
-
-
-        const bioInput = document.getElementById('bio');
-const saveBioBtn = document.getElementById('saveBio');
-
-saveBioBtn.addEventListener('click', async () => {
-    const bio = bioInput.value.trim();
-    if (!bio) {
-        alert('Please enter your bio.');
-        return;
-    }
-
-    const userRef = doc(db, 'UserAuthList', userCreds.uid);
-    await setDoc(userRef, { bio }, { merge: true });
-    console.log('Bio saved in Firestore.');
-
-    // Optionally, you can update a display element with the saved bio
-});
-
-        // Save bio to Firestore
-const saveBio = async (bio) => {
-    const userRef = doc(db, 'UserAuthList', userCreds.uid);
-    await setDoc(userRef, { bio }, { merge: true });
-    console.log('Bio saved in Firestore.');
-};
-
-// Retrieve bio from Firestore
-const getBio = async () => {
-    const docRef = doc(db, 'UserAuthList', userCreds.uid);
-    const docSnap = await getDoc(docRef);
-    const userData = docSnap.data();
-    return userData.bio || '';
-};
-
-// Display bio on the page
-const displayBio = async () => {
-    const bio = await getBio();
-    document.getElementById('bio').value = bio;
-};
-
-// Save bio when the form is submitted
-scheduleForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const bio = document.getElementById('bio').value;
-    await saveBio(bio);
-    alert('Bio saved successfully!');
-});
-
-// Display bio when the page loads
-displayBio();
-
-
-
-
-
-
-
-
-
-
-
 
     </script>
 </body>
