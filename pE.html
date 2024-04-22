@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAPAPP | User Profile</title>
+    <title>MAPAPP | Login & Registration</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -12,179 +12,192 @@
     <div class="wrapper">
         <nav class="nav">
             <div class="nav-logo">
-                <p style="font-weight: 100">WELCOME TO MESHUP BUSINESS SIDE</p>
+                <p style="font-weight: 100">Select your working:</p>
             </div>
             <div class="nav-menu" id="navMenu">
                 <ul>
-                    <li><a href="pr.html" class="link active">back</a></li>
+                    <li><a href="pr.html" class="link" onclick="register()">Back</a></li>
                 </ul>
-            </div>
+            </div>  
             <div class="input-box">
-                <button id="editSchedule" class="submit">reset</button>
+                <button id="saveScheduleBtn" class="submit">Save Schedule</button>
             </div>
         </nav>
 
-        <!-- Profile box -->
-        <div class="form-box">
-            <div class="profile-container">
-                <header>Edit Schedule</header>
-              
-                <div class="profile-info">
-                     <!--<img id="profilePicture" style="width: 100px; height: 80px;" />
-                    <br>
-                    <input type="file" id="profilePictureInput" accept="image/*">
-                    <button id="savePicture" class="submit">Save Picture</button>
-                   -->
-                    <form id="scheduleForm">
-                        <p style="color: aliceblue;">Days:</p>
-                        <label for="monday">Monday</label>
-                        <input type="checkbox" id="monday" name="monday">
-                        <label for="tuesday">Tuesday</label>
-                        <input type="checkbox" id="tuesday" name="tuesday">
-                        <br>
-                        <label for="wednesday">Wednesday</label>
-                        <input type="checkbox" id="wednesday" name="wednesday">
-                        <label for="thursday">Thursday</label>
-                        <input type="checkbox" id="thursday" name="thursday">
-                        <br>
-                        <label for="friday">Friday</label>
-                        <input type="checkbox" id="friday" name="friday">
-                        <label for="saturday">Saturday</label>
-                        <input type="checkbox" id="saturday" name="saturday">
-                        <br>
-                        <label for="sunday">Sunday</label>
-                        <input type="checkbox" id="sunday" name="sunday">
-                        <br>
-                        <p style="color: aliceblue;">HOURS:</p>
-                        <label for="start">Work Start:</label>
-                        <input type="time" id="start" name="start">
-                        <br>
-                      
-                        <label for="end">Work End:</label>
-                        <input type="time" id="end" name="end">
-                        <br>
-                        
+        <table id="scheduleForm">
+            <tr>
+                <td><input type="checkbox" id="Sunday" onclick="showTable('Sunday')"> Sunday</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" id="Monday" onclick="showTable('Monday')"> Monday</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" id="Tuesday" onclick="showTable('Tuesday')"> Tuesday</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" id="Wednesday" onclick="showTable('Wednesday')"> Wednesday</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" id="Thursday" onclick="showTable('Thursday')"> Thursday</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" id="Friday" onclick="showTable('Friday')"> Friday</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" id="Saturday" onclick="showTable('Saturday')"> Saturday</td>
+            </tr>
+        </table>
 
-                        <br>
-                        <div class="input-box">
-                            <button class="submit">Save Schedule</button>
-                        </div>
-                    </form>
-                    <br>
-                    <a class="link" id="viewScheduleLink"> Click here to view Schedule </a>
-                    <div id="displayChecked"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+        <div id="scheduleTables"></div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-    
-       
-        const firebaseConfig = {
-          apiKey: "AIzaSyCAnxon6V96vmKgTmocQEd6VJkZWKgRGfk",
-          authDomain: "webp-ff448.firebaseapp.com",
-          databaseURL: "https://webp-ff448-default-rtdb.europe-west1.firebasedatabase.app",
-          projectId: "webp-ff448",
-          storageBucket: "webp-ff448.appspot.com",
-          messagingSenderId: "362268597099",
-          appId: "1:362268597099:web:d9674bc4fc811f9c890a2e"
-        };
+        <script>
+            let scheduleTables = document.getElementById('scheduleTables');
+            let currentTables = {};
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const userCreds = JSON.parse(sessionStorage.getItem("user-creds"));
-
-        const getUserData = async () => {
-            const docRef = doc(db, 'Schedule/', userCreds.uid);
-            const docSnap = await getDoc(docRef);
-            const userData = docSnap.data();
-            document.getElementById('firstName').textContent = `First Name: ${userData.firstname}`;
-            document.getElementById('lastName').textContent = `Last Name: ${userData.lastname}`;
-            document.getElementById('businessName').textContent = `Business Name: ${userData.Businessname}`;
-            document.getElementById('phone').textContent = `Phone: ${userData.phone}`;
-            document.getElementById('email').textContent = `Email: ${userData.email}`;
-            if (userData.Schedule && userData.Schedule.days) {
-                document.getElementById('schedule').textContent = `Schedule: ${userData.Schedule.days.join(', ')}`;
+            function showTable(day) {
+                if (document.getElementById(day).checked) {
+                    createTable(day);
+                } else {
+                    removeTable(day);
+                }
             }
-          
-        };
 
-        getUserData();
-        const scheduleForm = document.getElementById('scheduleForm');
-scheduleForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-    const selectedDays = days.filter(day => document.getElementById(day).checked);
-    const start = document.getElementById('start').value;
-    const end = document.getElementById('end').value;
+            function createTable(day) {
+                if (!currentTables[day]) {
+                    let table = document.createElement('table');
+                    table.id = day + 'Table';
+                    table.style.width = '30%';
+                    table.style.marginBottom = '20px';
+                    table.style.background = 'linear-gradient(rgba(39,39,39, 0.6), transparent)';
 
-    selectedDays.forEach(async (day) => {
-        const userScheduleRef = doc(db, 'Schedule', userCreds.uid, day, 'Shift_1');
-        const userScheduleDoc = await getDoc(userScheduleRef);
-        const userScheduleData = userScheduleDoc.data() || {};
+                    let row = table.insertRow();
+                    let th1 = row.insertCell();
+                    let th2 = row.insertCell();
+                    th1.innerHTML = 'Start Hour';
+                    th2.innerHTML = 'End Hour';
 
-        const shiftNum = Object.keys(userScheduleData).length + 1;
-        userScheduleData[`Shift_${shiftNum}`] = {
-            start,
-            end
-        
-        };
+                    let addRowButton = document.createElement('button');
+                    addRowButton.textContent = 'Add Row';
+                    addRowButton.addEventListener('click', () => addRow(table));
 
-        await setDoc(userScheduleRef, userScheduleData);
-    });
+                    table.appendChild(addRowButton);
 
-    alert('Schedule saved successfully!');
-    document.getElementById('schedule').textContent = `Schedule: ${selectedDays.join(', ')}`;
-});
+                    let tableTitle = document.createElement('h3');
+                    tableTitle.textContent = day;
+                    scheduleTables.appendChild(tableTitle);
+                    scheduleTables.appendChild(table);
 
-const resetBtn = document.getElementById('editSchedule');
-resetBtn.addEventListener('click', () => {
-    const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-    days.forEach(day => {
-        document.getElementById(day).checked = false;
-    });
-   
-    document.getElementById('start').value = null; // Change value to null
-    document.getElementById('end').value = null; // Change value to null
-  
-});
+                    currentTables[day] = table;
+                }
+            }
 
-function displayCheckedSentence() {
-    console.log('Displaying checked sentence...');
+            function removeTable(day) {
+                if (currentTables[day]) {
+                    let table = currentTables[day];
+                    let tableTitle = table.previousSibling;
+                    scheduleTables.removeChild(tableTitle);
+                    scheduleTables.removeChild(table);
+                    delete currentTables[day];
+                }
+            }
 
-    const userScheduleRef = doc(db, 'Schedule', userCreds.uid);
-    getDoc(userScheduleRef).then((docSnapshot) => {
-        if (docSnapshot.exists()) {
-            const userData = docSnapshot.data();
-            const selectedDays = Object.keys(userData);
+            function addRow(table) {
+                let row = table.insertRow();
+                let startHourCell = row.insertCell();
+                let endHourCell = row.insertCell();
+                startHourCell.innerHTML = '<input type="time" placeholder="Start Hour">';
+                endHourCell.innerHTML = '<input type="time" placeholder="End Hour">';
 
-            const displayCheckedDiv = document.getElementById('displayChecked');
-            displayCheckedDiv.innerHTML = "Selected Days: " + selectedDays.join(', ');
+                let deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', () => deleteRow(table, row));
+                row.appendChild(deleteButton);
+            }
 
-            // Display hours for each selected day
-            selectedDays.forEach((day) => {
-                const shifts = Object.keys(userData[day]);
-                shifts.forEach((shift) => {
-                    const hours = userData[day][shift];
-                    displayCheckedDiv.innerHTML += "<br>"+ hours.workStart + " - " + hours.workEnd + ", " ;
+            async function deleteRow(table, row) {
+                try {
+                    table.deleteRow(row.rowIndex);
+                } catch (error) {
+                    console.error('Error deleting row:', error);
+                }
+            }
+        </script>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+            import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, query, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+            import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+
+            
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAnxon6V96vmKgTmocQEd6VJkZWKgRGfk",
+      authDomain: "webp-ff448.firebaseapp.com",
+      databaseURL: "https://webp-ff448-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "webp-ff448",
+      storageBucket: "webp-ff448.appspot.com",
+      messagingSenderId: "362268597099",
+      appId: "1:362268597099:web:d9674bc4fc811f9c890a2e"
+    };
+
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
+            const userCreds = JSON.parse(sessionStorage.getItem("user-creds"));
+
+            const saveScheduleBtn = document.getElementById('saveScheduleBtn');
+            saveScheduleBtn.addEventListener('click', saveSchedule);
+
+            async function saveSchedule() {
+                const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+                try {
+                    const user = auth.currentUser;
+                    if (!user) {
+                        throw new Error('User is not authenticated.');
+                    }
+
+                    days.forEach(async (day) => {
+                        if (document.getElementById(day).checked) {
+                            const startInputs = document.querySelectorAll(`#${day}Table input[type="time"][placeholder="Start Hour"]`);
+                            const endInputs = document.querySelectorAll(`#${day}Table input[type="time"][placeholder="End Hour"]`);
+
+                            for (let i = 0; i < startInputs.length; i++) {
+                                const start = startInputs[i].value;
+                                const end = endInputs[i].value;
+
+                                if (!start || !end) {
+                                    continue; // Skip saving if either start or end hour is empty
+                                }
+
+                                const userScheduleRef = collection(db, 'Schedule', user.uid, day);
+                                const userScheduleSnapshot = await getDocs(userScheduleRef);
+                                const shiftNum = userScheduleSnapshot.docs.length + 1;
+
+                                await setDoc(doc(userScheduleRef, `Shift_${shiftNum}`), {
+                                    start,
+                                    end
+                                });
+
+                                console.log(`Shift saved for ${day}, Shift_${shiftNum}`);
+                            }
+                        }
+                    });
+
+                    alert('Schedule saved successfully!');
+                } catch (error) {
+                    console.error('Error saving schedule:', error);
+                    alert('Failed to save schedule. Please try again.');
+                }
+            }
+
+            const resetBtn = document.getElementById('editSchedule');
+            resetBtn.addEventListener('click', () => {
+                const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                days.forEach(day => {
+                    document.getElementById(day).checked = false;
                 });
             });
-        } else {
-            const displayCheckedDiv = document.getElementById('displayChecked');
-            displayCheckedDiv.textContent = 'No schedule data found.';
-        }
-    }).catch((error) => {
-        console.error('Error getting document:', error);
-    });
-}
-
-document.getElementById('viewScheduleLink').addEventListener('click', displayCheckedSentence);
-
-    </script>
+        </script>
+    </div>
 </body>
 </html>
