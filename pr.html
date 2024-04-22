@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=auto, initial-scale=auto">
+    <meta name="viewport" content="width=device-width, initial-scale= 1.0">
     <title>MAPAPP | User Profile</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="style.css">
 </head>
 <style>
-
-    .wrap{
-        width: 1200px;
-        margin:30px auto;
-        display: grid;
-        grid-gap: 50px;
-        grid-template-columns: 300px auto;
+@media (max-width: 768px) {
+    /* CSS rules for smaller screens */
+    .wrap {
+        grid-template-columns: 100%;
     }
+}
+
     
     .form input{
         width: 100%;
@@ -54,7 +53,7 @@
     <div class="wrapper">
         <nav class="nav">
             <div class="nav-logo">
-                
+                <br>
                 <button class="submit" style="font-size: 14px; padding: 6px; margin: 4px;" type="submit">Save Location</button>
                 <div class="map" id="map" style="width: 70%; height: 300px;"></div>
                 <form id="locationForm">
@@ -87,8 +86,6 @@
             <div class="profile-container">
                 <header>User Profile</header>
                 <div class="profile-info">
-                    <br>
-                    
                     <p id="firstName"></p>
                     <p id="lastName"></p>
                     <p id="businessName"></p>
