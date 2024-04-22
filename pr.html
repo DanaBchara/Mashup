@@ -53,13 +53,8 @@
     <div class="wrapper">
         <nav class="nav">
             <div class="nav-logo">
-                <form id="locationForm">
-                    <button class="submit" style="width: 20%; height: 70px" type="submit">Save Location</button>
-                    <input type="text" style="width: 30%; height: 70px"   class="input-field" id="latitude" placeholder="Latitude" readonly>
-                    <input type="text" style="width: 30%; height: 70px"  class="input-field" id="longitude" placeholder="Longitude" readonly>
-                    
-                </form>
-                <div class="map" id="map" style="width: 70%; height: 300px;"></div>
+                
+                
                 
             </div>
             <div class="nav-menu" id="navMenu">
@@ -75,9 +70,10 @@
                 <label for="image">
                     <img src="" alt="" id="myimg" style="width: 150px; height: 150px; ">
                 </label>
+                
                 <input type="file" id="image" style="display: none;">
 
-                
+                <div class="map" id="map" style="width: 100%; height: 200px;"></div>
             </div>
         </nav>
 
@@ -86,15 +82,26 @@
             <div class="profile-container">
                 <header>User Profile</header>
                 <div class="profile-info">
+                  
                     <p id="firstName"></p>
                     <p id="lastName"></p>
                     <p id="businessName"></p>
                     <p id="phone"></p>
                     <p id="email"></p>
                     <p id="location"></p>
+                    <button class="submit" style="width: 40%; height: 40px" type="submit">Save Location</button>
+                    <form id="locationForm">
+                        
+                        <input type="text" style="width: 50%; height: 50px"   class="input-field" id="latitude" placeholder="Latitude" readonly>
+                    
+                        <input type="text" style="width: 50%; height: 50px"  class="input-field" id="longitude" placeholder="Longitude" readonly>
+                        
+                    </form>
+                    
                 </div>
             </div>
         </div>
+        
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
