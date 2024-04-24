@@ -55,12 +55,16 @@
             let currentTables = {};
 
             function showTable(day) {
-                if (document.getElementById(day).checked) {
-                    createTable(day);
-                } else {
-                    removeTable(day);
-                }
-            }
+    if (document.getElementById(day).checked) {
+        if (!currentTables[day]) {
+            createTable(day);
+        }
+        displaySavedSchedule(day);
+    } else {
+        removeTable(day);
+    }
+}
+
 
             function createTable(day) {
                 if (!currentTables[day]) {
@@ -121,6 +125,53 @@
                     console.error('Error deleting row:', error);
                 }
             }
+
+            function showTable(day) {
+            if (document.getElementById(day).checked) {
+                createTable(day);
+                displaySavedSchedule(auth, day); // Pass auth as a parameter
+            } else {
+                removeTable(day);
+            }
+        }
+
+        async function displaySavedSchedule(auth, day) { // Receive auth as a parameter
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    throw new Error('User is not authenticated.');
+                }
+
+                const userScheduleRef = collection(db, 'Schedule', user.uid, day);
+                const userScheduleSnapshot = await getDocs(userScheduleRef);
+
+                userScheduleSnapshot.forEach(doc => {
+                    const shiftData = doc.data();
+                    const { start, end } = shiftData;
+
+                    if (start && end) {
+                        if (!currentTables[day]) {
+                            createTable(day);
+                        }
+
+                        const table = currentTables[day];
+                        const row = table.insertRow();
+                        const startHourCell = row.insertCell();
+                        const endHourCell = row.insertCell();
+                        startHourCell.textContent = start;
+                        endHourCell.textContent = end;
+                    }
+                });
+
+                console.log('Schedule loaded successfully!');
+            } catch (error) {
+                console.error('Error loading schedule:', error.message); // Display error message
+            }
+        }
+
+        // Call displaySavedSchedule after initializing Firebase
+        displaySavedSchedule(auth);
+
         </script>
 
         <script type="module">
@@ -128,8 +179,7 @@
             import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, query, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
             import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
-            
-    const firebaseConfig = {
+            const firebaseConfig = {
       apiKey: "AIzaSyCAnxon6V96vmKgTmocQEd6VJkZWKgRGfk",
       authDomain: "webp-ff448.firebaseapp.com",
       databaseURL: "https://webp-ff448-default-rtdb.europe-west1.firebasedatabase.app",
@@ -144,6 +194,58 @@
             const auth = getAuth(app);
             const userCreds = JSON.parse(sessionStorage.getItem("user-creds"));
 
+           async function displaySavedSchedule() {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            throw new Error('User is not authenticated.');
+        }
+
+        days.forEach(async (day) => {
+            const userScheduleRef = collection(db, 'Schedule', user.uid, day);
+            const userScheduleSnapshot = await getDocs(userScheduleRef);
+
+            userScheduleSnapshot.forEach(doc => {
+                const shiftData = doc.data();
+                const { start, end } = shiftData;
+
+                if (start && end) {
+                    if (!currentTables[day]) {
+                        createTable(day);
+                    }
+
+                    const table = currentTables[day];
+                    const row = table.insertRow();
+                    const startHourCell = row.insertCell();
+                    const endHourCell = row.insertCell();
+                    startHourCell.textContent = start;
+                    endHourCell.textContent = end;
+                }
+            });
+        });
+
+
+        console.log('Schedule loaded successfully!');
+    } catch (error) {
+        console.error('Error loading schedule:', error);
+    }
+}
+
+            // Call displaySavedSchedule after initializing Firebase
+            displaySavedSchedule();
+
+
+
+            const unsubscribe = auth.onAuthStateChanged(user => {
+    if (user) {
+        displaySavedSchedule();
+    } else {
+        // Handle when user is not signed in
+        console.log('User is not signed in.');
+    }
+});
             const saveScheduleBtn = document.getElementById('saveScheduleBtn');
             saveScheduleBtn.addEventListener('click', saveSchedule);
 
@@ -183,20 +285,12 @@
                         }
                     });
 
-                    alert('Schedule saved successfully!');
-                } catch (error) {
-                    console.error('Error saving schedule:', error);
-                    alert('Failed to save schedule. Please try again.');
+                  
+                    console.log('Schedule loaded successfully!');
+    } catch (error) {
+        console.error('Error loading schedule:', error);
                 }
             }
-
-            const resetBtn = document.getElementById('editSchedule');
-            resetBtn.addEventListener('click', () => {
-                const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-                days.forEach(day => {
-                    document.getElementById(day).checked = false;
-                });
-            });
         </script>
     </div>
 </body>
